@@ -1,57 +1,66 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import {StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import { API_ROOT_URL } from '../config'
+import { useIsFocused } from "@react-navigation/native"
 
 
 const RunningHistory = (props) => {
     const [duree, setDuree] = useState([]);
     const [kilometres, setKilometres] = useState([]);
     const [date, setDate] = useState([]);
+
+    const isFocused = useIsFocused()
+
     const InfoCourse = async (id) => {
         console.log('ici')
-        const data = await axios.get(`${API_ROOT_URL}/course/${id}`)
-        .then((response) => {
-            setDuree(duree => [...duree, response.data.duree]);
-            setKilometres(kilometres => [...kilometres, response.data.kilometres]);
-            setDate(date => [...date, (response.data.date).slice(0,10)]);
-        })
+        await axios.get(`${API_ROOT_URL}/course/${id}`)
+            .then((response) => {
+                setDuree(duree => [...duree, response.data.duree]);
+                setKilometres(kilometres => [...kilometres, response.data.kilometres]);
+                setDate(date => [...date, (response.data.date).slice(0, 10)]);
+            })
     }
 
-    const fetchInfo = async (email) => {        
-        const data = await axios.get(`${API_ROOT_URL}/utilisateur/${email}`)
+    const fetchInfo = async (email) => {
+        await axios.get(`${API_ROOT_URL}/utilisateur/${email}`)
             .then((response) => {
-                    response.data.tableauCourse.map((prop, key) => {
-                        console.log(prop)
-                        if(prop != '')
-                            InfoCourse(prop)
-                        
-                    })
+                response.data.tableauCourse.map((prop, key) => {
+                    console.log(prop)
+                    if (prop != '')
+                        InfoCourse(prop)
+
+                })
             })
-            
+
     }
 
     useEffect(() => {
-        console.log('email = ' + JSON.stringify(props.route.params.email))
-        fetchInfo(props.route.params.email)
-    }, [])
+        if (isFocused) {
+            console.log('email = ' + JSON.stringify(props.route.params.email))
+            setDuree([])
+            setKilometres([])
+            setDate([])
+            fetchInfo(props.route.params.email)
+        }
+    }, [isFocused])
 
     return (
-        <View style={styles.background}>
+        <ScrollView style={styles.background}>
             <Text style={styles.title}>Tableau des courses</Text>
             <View style={styles.container}>
                 <Text style={styles.text}>Course : </Text>
                 <Text style={styles.text}>Durée    Kilomètres     Date</Text>
                 {
-            duree.map((prop, key) => {
-                return(<Text style={styles.text} key={key}>  {prop}min         {kilometres[key]}m          {date[key]} </Text>) ;                
-            })
-        }
-         {
-           
-        }
+                    duree.map((prop, key) => {
+                        return (<Text style={styles.text} key={key}>  {prop}min         {kilometres[key]}m          {date[key]} </Text>);
+                    })
+                }
+                {
+
+                }
             </View>
-        </View>
+        </ScrollView>
     )
 }
 
@@ -65,7 +74,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'pink',
         alignItems: 'center',
         justifyContent: 'center',
-      },
+    },
     title: {
         marginTop: '20%',
         color: '#1abc9c',

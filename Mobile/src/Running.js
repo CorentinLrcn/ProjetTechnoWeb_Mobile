@@ -115,7 +115,7 @@ const Running = (props) => {
             date: date,
             vitesseMoyenne: vitesseMoyenne
         }
-        const { data } = await axios.post(`${API_ROOT_URL}/course?kilometres=${distance}&duree=${duree}&date=${date}&vitesseMoyenne=${vitesseMoyenne}&idRunner=${id}`, body)
+        await axios.post(`${API_ROOT_URL}/course?kilometres=${distance}&duree=${duree}&date=${date}&vitesseMoyenne=${vitesseMoyenne}&idRunner=${id}`, body)
             .then((res) => {
                 console.log(res.data);
                 addRun(res.data.idRunner, res.data._id)
@@ -126,13 +126,13 @@ const Running = (props) => {
     }
 
     const addRun = async (idRunner, id) => {
-        const { data } = await axios.post(`${API_ROOT_URL}/utilisateur/${idRunner}?course=${id}`)
-        .then((res) => {
-            console.log(res.data);
-        })
-        .catch(() => {
-            console.log("ca veut pas");
-        })
+        await axios.post(`${API_ROOT_URL}/utilisateur/${idRunner}?course=${id}`)
+            .then((res) => {
+                console.log(res.data);
+            })
+            .catch(() => {
+                console.log("ca veut pas");
+            })
     }
 
     useEffect(() => {
