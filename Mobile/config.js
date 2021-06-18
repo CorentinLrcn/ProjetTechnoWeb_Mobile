@@ -1,4 +1,4 @@
-const API_ROOT_URL = "https://projettechnoweb.herokuapp.com"
+const API_ROOT_URL = "https://junco-app.herokuapp.com"
 // const API_ROOT_URL="http://10.0.2.2:5000"
 // const API_ROOT_URL="http://192.168.1.58:5000"
 

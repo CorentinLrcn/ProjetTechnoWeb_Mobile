@@ -71,7 +71,7 @@ const Running = (props) => {
 
     const LOCATION_SETTINGS = {
         accuracy: Location.Accuracy.High,
-        timeInterval: 3000,
+        timeInterval: 10000,
         distanceInterval: 0
     }
 
@@ -198,7 +198,7 @@ const Running = (props) => {
             Math.cos(degreesToRadians(lat2))
             *
             Math.cos(degreesToRadians(long1 - long2))
-        ) * 637100
+        ) * 6371000
     }
 
     const GetNewLocation = (geolocation) => {

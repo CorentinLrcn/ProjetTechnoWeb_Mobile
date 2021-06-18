@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Running",
+    "name": "Junco",
     "slug": "Running",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -24,8 +24,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "https://media.discordapp.net/attachments/771665604977491978/832541002581016606/logo_small_icon_only_inverted.png",
+        "backgroundColor": "#e00974"
       },
       "config": {
         "googleMaps": {
