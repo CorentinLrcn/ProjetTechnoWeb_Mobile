@@ -13,6 +13,9 @@ const Verif = async (email, motDePasse, navigation) => {
             const _id = response.data._id
             navigation.navigate('Application', { email, _id })
           })
+          .catch((err) => {
+            console.log(`Ça ne veut pas fonctionner : |${email}| - |${motDePasse}|`)
+          })
         //console.log(res)
         //return (await res.catch()).data;
     //} catch (err) {
