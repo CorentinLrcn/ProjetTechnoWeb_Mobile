@@ -95,7 +95,7 @@ const Inscription = (props) => {
         <View style={styles.inputView}>
           <TextInput
             style={styles.TextInput}
-            placeholder="Password"
+            placeholder="Mot de passe"
             placeholderTextColor="gray"
             secureTextEntry={true}
             onChangeText={(motDePasse) => setMotDePasse(motDePasse)}
@@ -103,7 +103,7 @@ const Inscription = (props) => {
         </View>
 
         <TouchableOpacity
-          style={styles.loginBtn}
+          style={styles.signinBtn}
           onPress={() => {
             setDate(new Date(anneeNaissance + '-' + moisNaissance + '-' + jourNaissance))
             Ajout(prenom, nom, email, dateDeNaissance, motDePasse)
@@ -111,6 +111,15 @@ const Inscription = (props) => {
           }}
         >
           <Text style={styles.loginText}>Inscription</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.loginBtn}
+          onPress={() => {
+            navigation.navigate('Connexion')
+          }}
+        >
+          <Text style={styles.loginText}>Connexion</Text>
         </TouchableOpacity>
       </View>
     </View >
@@ -122,6 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
+    paddingTop: '10%'
   },
 
   form: {
@@ -142,15 +152,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#e0e0e0",
     borderRadius: 10,
     width: "70%",
-    height: 45,
+    height: 40,
     marginBottom: 20,
-    justifyContent: "center",
+    justifyContent: "center"
   },
 
   inputView2: {
     borderRadius: 10,
     width: "70%",
-    height: 45,
+    height: 40,
     marginBottom: 20,
     flexDirection: 'row'
   },
@@ -159,16 +169,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#e0e0e0",
     borderRadius: 10,
     width: "20%",
-    height: 45,
-    marginRight: 20
+    height: 40,
+    marginRight: 20,
+    justifyContent: 'center'
   },
 
   inputViewAnnee: {
     backgroundColor: "#e0e0e0",
     borderRadius: 10,
     width: "40%",
-    height: 45,
+    height: 40,
     marginLeft: 5,
+    justifyContent: 'center'
   },
 
   TextInput: {
@@ -176,15 +188,26 @@ const styles = StyleSheet.create({
     color: 'black'
   },
 
-  loginBtn: {
+  signinBtn: {
     width: "100%",
     borderRadius: 5,
-    height: 50,
+    height: 40,
     justifyContent: "center",
-    marginTop: 40,
+    marginTop: 10,
     backgroundColor: "#1abc9c",
     paddingHorizontal: "10%",
   },
+
+  loginBtn: {
+    width: "100%",
+    borderRadius: 5,
+    height: 40,
+    justifyContent: "center",
+    marginTop: 20,
+    backgroundColor: "#1abc9c",
+    paddingHorizontal: "10%",
+  },
+
   loginText: {
     fontWeight: "bold",
     color: "white",

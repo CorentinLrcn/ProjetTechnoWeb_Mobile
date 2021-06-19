@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#e0e0e0",
     borderRadius: 10,
     width: "70%",
-    height: 45,
+    height: 40,
     marginBottom: 20,
     justifyContent: "center",
   },
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   loginBtn: {
     width: "100%",
     borderRadius: 5,
-    height: 50,
+    height: 40,
     justifyContent: "center",
     marginTop: 20,
     backgroundColor: "#1abc9c",

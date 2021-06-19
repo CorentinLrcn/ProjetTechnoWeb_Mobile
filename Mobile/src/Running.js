@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, TouchableOpacity, View, Button, Text, Image, Alert, SafeAreaView } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import MapView, { Marker } from "react-native-maps"
+import MapView, { Marker, Polyline } from "react-native-maps"
 import Geolocation from 'react-native-geolocation-service'
 import * as Location from 'expo-location'
 import axios from 'axios'
@@ -13,12 +13,16 @@ const Running = (props) => {
     const [restart, setRestart] = useState(false)
     const [counter, setCounter] = useState(0)
     const [timer, setTimer] = useState()
-    const latitudeDelta = 0.009
-    const longitudeDelta = 0.009
-    const day = new Date().getDate();
-    const month = new Date().getMonth()+1;
-    const year = new Date().getFullYear();
+    const latitudeDelta = 0.003
+    const longitudeDelta = 0.003
+    const day = new Date().getDate()
+    const month = new Date().getMonth() + 1
+    const year = new Date().getFullYear()
     const [distanceCourse, setDistCourse] = useState(0)
+    const [coordinates, setCoordinates] = useState([])
+    const [areHoursShown, setAreHoursShown] = useState(false)
+    const [areMinutesShown, setAreMinutesShown] = useState(false)
+    const [widthLine, setWidthLine] = useState(0)
 
     const tabVilles = [
         {
@@ -71,7 +75,7 @@ const Running = (props) => {
 
     const LOCATION_SETTINGS = {
         accuracy: Location.Accuracy.High,
-        timeInterval: 10000,
+        timeInterval: 5000,
         distanceInterval: 0
     }
 
@@ -81,6 +85,9 @@ const Running = (props) => {
                 setCounter(0)
                 setDistCourse(0)
                 setRestart(false)
+                setCoordinates([])
+                setAreHoursShown(false)
+                setAreMinutesShown(false)
             }
             setTimerOn(true)
             setTimer(setInterval(() => {
@@ -88,6 +95,7 @@ const Running = (props) => {
             }, 1000))
             GetEvolutiveLocation()
         }
+        setWidthLine(3)
     }
 
     const pause = () => {
@@ -141,6 +149,12 @@ const Running = (props) => {
     }, [])
 
     useEffect(() => {
+        if ((counter / 3600) >= 1) setAreHoursShown(true)
+        // console.log(counter / 60)
+        if ((counter / 60) >= 1) setAreMinutesShown(true)
+    }, [counter])
+
+    useEffect(() => {
         //console.log('region : ' + JSON.stringify(region)+'\n\n')
         CalcKm()
     }, [newRegion])
@@ -175,6 +189,7 @@ const Running = (props) => {
             //console.log('coords : ' + JSON.stringify(coords))
             setRegion({ latitude, longitude, latitudeDelta, longitudeDelta })
             setNewRegion({ latitude, longitude, latitudeDelta, longitudeDelta })
+            setCoordinates(coordinates => [...coordinates, { latitude: latitude, longitude: longitude }])
         }
     }
 
@@ -215,6 +230,7 @@ const Running = (props) => {
             longitudeDelta: longitudeDelta
         }
         setNewRegion(tmpRegion)
+        setCoordinates(coordinates => [...coordinates, { latitude: latitude, longitude: longitude }])
     }
 
     const CalcKm = () => {
@@ -234,22 +250,40 @@ const Running = (props) => {
 
     return (
         <View style={styles.container}>
-            <Image
-                style={{ height: 150, width: '100%', top: 5 }}
-                source={{
-                    uri: 'https://cdn.discordapp.com/attachments/771665604977491978/840167041507655680/logo_small_mobile.png'
-                }} />
-            <Text style={{ fontSize: 25, color: '#e00974', marginTop: '-5%', marginBottom: '2.5%' }}>{day} / {month} / {year}</Text>
-            {region.latitude != null && <MapView
-                style={{ height: '35%', width: '90%' }}
-                region={region}
-                onRegionChangeComplete={region => setRegion(region)}
+            <View style={{ height: '20%', width: '100%', alignItems: 'center' }}>
+                <Image
+                    style={{ height: 150, width: '100%', top: 5 }}
+                    source={{
+                        uri: 'https://cdn.discordapp.com/attachments/771665604977491978/840167041507655680/logo_small_mobile.png'
+                    }} />
+                <Text style={{ fontSize: 25, color: '#e00974', marginTop: '-5%', marginBottom: '2.5%' }}>{day} / {month} / {year}</Text>
+            </View>
+            <View
+                style={{ height: '40%', width: '95%', alignItems: 'center', marginTop: '5%', borderWidth: 7.5, borderRadius: 10, borderTopColor: '#e00974', borderLeftColor: '#e00974', borderRightColor: '#1abc9c', borderBottomColor: '#1abc9c' }}
+                pointerEvents="none"
             >
-                <Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }} />
-            </MapView>}
+                {region.latitude != null &&
+                    <MapView
+                        style={{ height: '100%', width: '100%' }}
+                        region={region}
+                        onRegionChangeComplete={region => setRegion(region)}
+                    >
+                        <Polyline coordinates={coordinates} strokeWidth={widthLine} strokeColor={'#1abc9c'} />
+                        <Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }} />
+                    </MapView>
+                }
+            </View>
             <View style={styles.infoRun}>
                 <Text style={styles.time}>{distanceCourse} m</Text>
-                <Text style={styles.time}>{counter} s</Text>
+                <View style={styles.timer}>
+                    {areHoursShown &&
+                        <Text style={styles.time}>{(counter / 3600).toFixed(0) * 1} h </Text>
+                    }
+                    {areMinutesShown &&
+                        <Text style={styles.time}>{(counter / 60).toFixed(0) * 1} min </Text>
+                    }
+                    <Text style={styles.time}>{counter % 60} s</Text>
+                </View>
                 <View style={styles.block}>
                     <TouchableOpacity
                         style={styles.playBtn}
@@ -284,39 +318,44 @@ const styles = StyleSheet.create({
     },
     infoRun: {
         flex: 1,
-        backgroundColor: 'white',
         alignItems: 'center',
-        marginTop: '5%'
+        marginTop: '5%',
+        paddingTop: '5%',
+        height: '30%',
+        width: '100%'
     },
     playBtn: {
-        width: '15%',
-        height: '55%',
+        width: 70,
+        height: 70,
         backgroundColor: '#1abc9c',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 10,
+        borderRadius: 35,
         marginHorizontal: '2.5%',
         marginTop: '5%'
     },
     pauseBtn: {
-        width: '15%',
-        height: '55%',
+        width: 70,
+        height: 70,
         backgroundColor: 'orange',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 10,
+        borderRadius: 35,
         marginHorizontal: '2.5%',
         marginTop: '5%'
     },
     stopBtn: {
-        width: '15%',
-        height: '55%',
+        width: 70,
+        height: 70,
         backgroundColor: 'red',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 10,
+        borderRadius: 35,
         marginHorizontal: '2.5%',
         marginTop: '5%'
+    },
+    timer: {
+        flexDirection: 'row'
     },
     time: {
         fontSize: 25,

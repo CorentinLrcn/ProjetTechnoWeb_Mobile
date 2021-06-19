@@ -1,9 +1,9 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet, Text, TextInput, View, ScrollView, Picker } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import Picker from '@react-native-picker/picker'
 import { API_ROOT_URL } from '../config'
+import { useIsFocused } from "@react-navigation/native"
 
 const saveOnDB = async (taille, poids, sexe, id) => {
     const data = await axios.put(`${API_ROOT_URL}/utilisateur/${id}?taille=${taille}&poids=${poids}&sexe=${sexe}`)
@@ -18,6 +18,8 @@ const MyAccount = (props) => {
     const [poids, setPoids] = useState(0)
     const [sexe, setSexe] = useState('')
     const [dateNaissance, setDateNaissance] = useState('01-01-2000')
+
+    const isFocused = useIsFocused()
 
     const fetchInfo = async (email) => {
         console.log('bonjour')
@@ -35,42 +37,68 @@ const MyAccount = (props) => {
     }
 
     useEffect(() => {
-        console.log('email = ' + JSON.stringify(props.route.params.email))
-        fetchInfo(props.route.params.email)
-    }, [])
+        if (isFocused) fetchInfo(props.route.params.email)
+    }, [isFocused])
 
     return (
-        <View style={styles.background}>
+        <ScrollView style={styles.background}>
             <Text style={styles.title}>Informations profil</Text>
-            <View style={styles.container}>
-                <Text style={styles.text}>Nom : {nom}</Text>
-                <Text style={styles.text}>Prénom : {prenom}</Text>
-                <Text style={styles.text}>Date de Naissance : {dateNaissance}</Text>
-                <Text style={styles.text}>E-mail : {props.route.params.email}</Text>
-                <View style={styles.block}>
-                    <Text style={styles.text}>Taille : </Text>
-                    <TextInput style={styles.textInput} value={taille.toString()} onChangeText={setTaille} keyboardType='numeric' />
-                    <Text style={styles.text}> cm</Text>
-                </View>
-                <View style={styles.block}>
-                    <Text style={styles.text}>Poids : </Text>
-                    <TextInput style={styles.textInput} value={poids.toString()} onChangeText={setPoids} keyboardType='numeric' />
-                    <Text style={styles.text}> kg</Text>
-                </View>
-                <View style={styles.block}>
-                    <Text style={styles.text}>Sexe : </Text>
-                    <TextInput style={styles.textInput} value={sexe} onChangeText={setSexe} />
+            <View style={styles.border}>
+                <View style={styles.container}>
+                    <Text style={styles.label}>Nom</Text>
+                    <Text style={styles.text}>{nom}</Text>
+                    <View style={{ paddingTop: '2.5%', width: '100%', alignItems: 'center' }}>
+                        <Text style={styles.label}>Prénom</Text>
+                        <Text style={styles.text}>{prenom}</Text>
+                    </View>
+                    <View style={{ paddingTop: '2.5%', width: '100%', alignItems: 'center' }}>
+                        <Text style={styles.label}>Date de Naissance</Text>
+                        <Text style={styles.text}>{dateNaissance}</Text>
+                    </View>
+                    <View style={{ paddingTop: '2.5%', width: '100%', alignItems: 'center' }}>
+                        <Text style={styles.label}>E-mail</Text>
+                        <Text style={styles.text}>{props.route.params.email}</Text>
+                    </View>
+                    <View style={{ paddingTop: '2.5%', width: '100%', alignItems: 'center' }}>
+                        <Text style={styles.label}>Taille</Text>
+                        <View style={styles.block}>
+                            <TextInput style={styles.textInput} value={taille.toString()} onChangeText={setTaille} keyboardType='numeric' />
+                            <Text style={styles.textUnit}> cm</Text>
+                        </View>
+                    </View>
+                    <View style={{ paddingTop: '2.5%', width: '100%', alignItems: 'center' }}>
+                        <Text style={styles.label}>Poids</Text>
+                        <View style={styles.block}>
+                            <TextInput style={styles.textInput} value={poids.toString()} onChangeText={setPoids} keyboardType='numeric' />
+                            <Text style={styles.textUnit}> kg</Text>
+                        </View>
+                    </View>
+                    <View style={{ paddingTop: '2.5%', width: '100%', alignItems: 'center' }}>
+                        <Text style={styles.label}>Sexe</Text>
+                        {/*<TextInput style={styles.textInput} value={sexe} onChangeText={setSexe} />*/}
+                        <View style={{ borderWidth: 1, paddingLeft: '21.5%', borderColor: 'black' }}>
+                            <Picker
+                                selectedValue={sexe}
+                                style={{ height: 50, width: 150, color: 'black' }}
+                                onValueChange={(itemValue) => setSexe(itemValue)}
+                            >
+                                <Picker.Item label="      ..." value="" />
+                                <Picker.Item label="Homme" value="Homme" />
+                                <Picker.Item label="Femme" value="Femme" />
+                            </Picker>
+                        </View>
+                    </View>
                 </View>
             </View>
             <TouchableOpacity
-                style={styles.loginBtn}
+                style={styles.saveBtn}
                 onPress={() => {
                     saveOnDB(taille, poids, sexe, id)
                 }}
             >
-                <Text style={styles.loginText}>Enregistrer</Text>
+                <Text style={styles.saveText}>Enregistrer</Text>
             </TouchableOpacity>
-        </View>
+        </ScrollView>
     )
 }
 
@@ -80,34 +108,54 @@ const styles = StyleSheet.create({
         height: '100%'
     },
     title: {
-        marginTop: '20%',
-        color: '#1abc9c',
+        borderRadius: 10,
+        marginTop: '15%',
+        color: '#e00974',
         fontSize: 40,
         textAlign: 'center'
     },
-    container: {
-        alignItems: 'center',
-        marginVertical: '15%',
-        backgroundColor: '#1abc9c',
+    border: {
+        marginTop: '10%',
+        marginBottom: '15%',
         marginHorizontal: '5%',
+        borderWidth: 7.5,
+        borderTopColor: '#e00974',
+        borderLeftColor: '#e00974',
+        borderRightColor: '#1abc9c',
+        borderBottomColor: '#1abc9c',
         borderRadius: 10
     },
-    text: {
-        marginVertical: '2.5%',
+    container: {
+        alignItems: 'center',
+        paddingVertical: '2.5%',
+        width: '100%',
+    },
+    label: {
         fontSize: 20,
-        color: 'white'
+        color: 'black',
+        fontWeight: 'bold'
+    },
+    text: {
+        marginBottom: '2.5%',
+        fontSize: 20,
+        color: 'black'
+    },
+    textUnit: {
+        fontSize: 20,
+        color: 'black'
     },
     textInput: {
         fontSize: 20,
-        color: 'white',
+        color: 'black',
         textAlign: 'center',
         fontWeight: 'bold',
         textDecorationLine: 'underline'
     },
     block: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        marginBottom: '2.5%'
     },
-    loginBtn: {
+    saveBtn: {
         width: "80%",
         borderRadius: 5,
         height: 50,
@@ -116,7 +164,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#1abc9c",
         paddingHorizontal: "10%",
     },
-    loginText: {
+    saveText: {
         fontWeight: "bold",
         color: 'white',
         textAlign: 'center',

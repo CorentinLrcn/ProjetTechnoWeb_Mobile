@@ -13,8 +13,8 @@ const TabNavigation = (props) => {
     return (
         <Tabs.Navigator
             tabBarOptions={{
-                //activeTintColor: '#e00974',
-                //inactiveTintColor: 'white',
+                activeTintColor: '#e00974',
+                inactiveTintColor: '#1abc9c',
                 activeBackgroundColor: '#1abc9c',
                 inactiveBackgroundColor: '#e00974',
                 labelStyle: {
@@ -25,17 +25,32 @@ const TabNavigation = (props) => {
             initialRouteName = "Running"
         >
 
-            <Tabs.Screen name="Running" component={Running} initialParams={{ _id: route.params._id }} options={{
-                tabBarIcon: () => <Ionicons name="timer-outline" size={25} color='white' />,
-            }} />
+            <Tabs.Screen
+                name="Running"
+                component={Running}
+                initialParams={{ _id: route.params._id }}
+                options={{
+                    tabBarIcon: () => <Ionicons name="timer-outline" size={25} color='white' />,
+                }}
+            />
 
-            <Tabs.Screen name="Historique" component={RunningHistory} initialParams={{ email: route.params.email }} options={{
-                tabBarIcon: () => <Ionicons name="file-tray-full-outline" size={25} color='white' />,
-            }} />
+            <Tabs.Screen
+                name="Historique"
+                component={RunningHistory}
+                initialParams={{ email: route.params.email }}
+                options={{
+                    tabBarIcon: () => <Ionicons name="file-tray-full-outline" size={25} color='white' />,
+                }}
+            />
 
-            <Tabs.Screen name="Mon Compte" component={MyAccount} initialParams={{ email: route.params.email }} options={{
-                tabBarIcon: () => <Ionicons name="person-outline" size={25} color='white' />,
-            }} />
+            <Tabs.Screen
+                name="Mon Compte"
+                component={MyAccount}
+                initialParams={{ email: route.params.email }}
+                options={{
+                    tabBarIcon: () => <Ionicons name="person-outline" size={25} color='white' />,
+                }}
+            />
 
         </Tabs.Navigator >
     )

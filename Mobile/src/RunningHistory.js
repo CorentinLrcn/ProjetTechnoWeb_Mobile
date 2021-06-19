@@ -49,11 +49,21 @@ const RunningHistory = (props) => {
         <ScrollView style={styles.background}>
             <Text style={styles.title}>Tableau des courses</Text>
             <View style={styles.container}>
-                <Text style={styles.text}>Course : </Text>
-                <Text style={styles.text}>Durée    Kilomètres     Date</Text>
+                <Text style={styles.text}>Courses</Text>
+                <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'center', borderTopWidth:1, borderBottomWidth:1 }}>
+                    <Text style={styles.tableHeader}>Durée</Text>
+                    <Text style={styles.tableHeaderMiddle}>Distance</Text>
+                    <Text style={styles.tableHeader}>Date</Text>
+                </View>
                 {
                     duree.map((prop, key) => {
-                        return (<Text style={styles.text} key={key}>  {prop}min         {kilometres[key]}m          {date[key]} </Text>);
+                        return (
+                            <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'center', borderBottomWidth: 1 ,borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
+                                <Text style={styles.tableTimeRows} key={key}>{(prop / 3600).toFixed(0) * 1} h {(prop / 60).toFixed(0) * 1} min {prop % 60} s</Text>
+                                <Text style={styles.tableDistRows} key={key}>{kilometres[key]} m</Text>
+                                <Text style={styles.tableDateRows} key={key}>{date[key]}</Text>
+                            </View>
+                        );
                     })
                 }
                 {
@@ -84,15 +94,65 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         marginVertical: '15%',
-        backgroundColor: '#1abc9c',
-        marginHorizontal: '5%',
+        backgroundColor: '#e00974',
+        marginHorizontal: '2.5%',
+        borderLeftWidth: 1, 
+        borderRightWidth: 1, 
+        borderTopWidth:1,
         borderRadius: 10
     },
     text: {
         marginVertical: '2.5%',
         fontSize: 20,
         color: 'white',
-        alignItems: 'center'
+        alignItems: 'center',
+        fontWeight: 'bold',
+        backgroundColor: '#e00974'
+    },
+    tableHeader: {
+        paddingVertical: '2%',
+        fontSize: 20,
+        color: 'white',
+        textAlign: 'center',
+        width: '37.5%',
+        fontWeight: 'bold',
+        backgroundColor: '#1abc9c'
+    },
+    tableHeaderMiddle: {
+        paddingVertical: '2%',
+        fontSize: 20,
+        color: 'white',
+        textAlign: 'center',
+        width: '25%',
+        fontWeight: 'bold',
+        borderRightWidth: 1,
+        borderLeftWidth: 1
+    },
+    tableTimeRows: {
+        paddingVertical: '2%',
+        fontSize: 20,
+        textAlign: 'center',
+        width: '37.5%',
+        backgroundColor: 'white',
+        borderBottomLeftRadius: 10
+    },
+    tableDistRows: {
+        paddingVertical: '2%',
+        fontSize: 20,
+        textAlign: 'center',
+        //backgroundColor: 'white',
+        color: 'white',
+        width: '25%',
+        borderRightWidth: 1,
+        borderLeftWidth: 1
+    },
+    tableDateRows: {
+        paddingVertical: '2%',
+        fontSize: 20,
+        textAlign: 'center',
+        width: '37.5%',
+        backgroundColor: 'white',
+        borderBottomRightRadius: 10
     },
     textInput: {
         fontSize: 20,
