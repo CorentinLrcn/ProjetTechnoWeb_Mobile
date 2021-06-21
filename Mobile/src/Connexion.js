@@ -1,34 +1,30 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
+import { showMessage } from "react-native-flash-message";
+import FlashMessage from "react-native-flash-message"
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { API_ROOT_URL } from "../config";
 
 const Verif = async (email, motDePasse, navigation) => {
-//try {
-  //console.log('on est dedans')
-        const res = axios.get(`${API_ROOT_URL}/utilisateur/connexionMobile?email=${email}&motDePasse=${motDePasse}`)
-          .then((response) => {
-            //console.log(response.data)
-            const _id = response.data._id
-            navigation.navigate('Application', { email, _id })
-          })
-          .catch((err) => {
-            console.log(`Ça ne veut pas fonctionner : |${email}| - |${motDePasse}|`)
-          })
-        //console.log(res)
-        //return (await res.catch()).data;
-    //} catch (err) {
-        //console.log(err);
-        //throw err;
-    //}
+  axios.get(`${API_ROOT_URL}/utilisateur/connexionMobile?email=${email}&motDePasse=${motDePasse}`)
+    .then((response) => {
+      const _id = response.data._id
+      navigation.navigate('Application', { email, _id })
+    })
+    .catch((err) => {
+      showMessage({
+        message: "Email ou mot de passe incorrect",
+        type: "danger"
+      })
+    })
 }
 
 const Connexion = (props) => {
   const [motDePasse, setMotDePasse] = useState("");
   const [email, setEmail] = useState("");
 
-  const {navigation} = props
+  const { navigation } = props
 
   return (
     <View style={styles.container}>
@@ -49,7 +45,7 @@ const Connexion = (props) => {
         <View style={styles.inputView}>
           <TextInput
             style={styles.TextInput}
-            placeholder="Password"
+            placeholder="Mot de passe"
             placeholderTextColor="gray"
             secureTextEntry={true}
             onChangeText={(motDePasse) => setMotDePasse(motDePasse)}
@@ -70,6 +66,7 @@ const Connexion = (props) => {
           <Text style={styles.loginText}>Inscription</Text>
         </TouchableOpacity>
       </View>
+      <FlashMessage position="top" />
     </View>
   )
 }

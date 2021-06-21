@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons'
 const Tabs = createBottomTabNavigator()
 
 const TabNavigation = (props) => {
-    const {route, navigation} = props
+    const { route } = props
 
     return (
         <Tabs.Navigator

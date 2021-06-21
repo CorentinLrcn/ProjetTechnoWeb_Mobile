@@ -1,6 +1,7 @@
 import axios from "axios";
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
+import FlashMessage, { showMessage } from "react-native-flash-message";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { API_ROOT_URL } from "../config";
 
@@ -22,12 +23,40 @@ const Inscription = (props) => {
   const [motDePasse, setMotDePasse] = useState("");
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
-  const [dateDeNaissance, setDate] = useState(new Date("2000-01-01"));
   const [jourNaissance, setJourN] = useState("01");
   const [moisNaissance, setMoisN] = useState("01");
-  const [anneeNaissance, setAnneeN] = useState("2000");
+  const [anneeNaissance, setAnneeN] = useState("0001");
+  const [dateDeNaissance, setDate] = useState(new Date(`${anneeNaissance}-${moisNaissance}-${jourNaissance}`));
 
   const { navigation } = props;
+
+  const VerifNotEmpty = () => {
+    if (nom === '') showMessage({ message: "Nom non rempli", type: "warning" })
+    else if (prenom === '') showMessage({ message: "Prénom non rempli", type: "warning" })
+    else if (dateDeNaissance === new Date(`0001-01-01`)) showMessage({ message: "Date de naissance non remplie", type: "warning" })
+    else if (email === '') showMessage({ message: "E-mail non rempli", type: "warning" })
+    else if (motDePasse === '') showMessage({ message: "Mot de passe non rempli", type: "warning" })
+  }
+
+  const VerifIfEmailTaken = async () => {
+    console.log('bonjour')
+    await axios.get(`${API_ROOT_URL}/utilisateur/${email}`)
+      .then((response) => {
+          console.log('response : ' + JSON.stringify(response))
+          if (response.data !== '') {
+            showMessage({ 
+              message: `Un compte existe déjà pour ${email}`, 
+              type: 'danger' 
+            })
+          } else {
+            Ajout(prenom, nom, email, dateDeNaissance, motDePasse)
+            navigation.navigate('Connexion')
+          }
+      })
+      .catch((err) => {
+        console.log(`Erreur : ${err}`)
+      })
+}
 
   return (
     <View style={styles.container}>
@@ -61,6 +90,7 @@ const Inscription = (props) => {
               placeholderTextColor="gray"
               onChangeText={(jourNaissance) => setJourN(jourNaissance)}
               keyboardType='numeric'
+              maxLength={2}
             />
           </View>
 
@@ -71,6 +101,7 @@ const Inscription = (props) => {
               placeholderTextColor="gray"
               onChangeText={(moisNaissance) => setMoisN(moisNaissance)}
               keyboardType='numeric'
+              maxLength={2}
             />
           </View>
 
@@ -81,6 +112,7 @@ const Inscription = (props) => {
               placeholderTextColor="gray"
               onChangeText={(anneeNaissance) => setAnneeN(anneeNaissance)}
               keyboardType='numeric'
+              maxLength={4}
             />
           </View>
         </View>
@@ -106,8 +138,8 @@ const Inscription = (props) => {
           style={styles.signinBtn}
           onPress={() => {
             setDate(new Date(anneeNaissance + '-' + moisNaissance + '-' + jourNaissance))
-            Ajout(prenom, nom, email, dateDeNaissance, motDePasse)
-            navigation.navigate('Connexion')
+            VerifNotEmpty()
+            VerifIfEmailTaken()
           }}
         >
           <Text style={styles.loginText}>Inscription</Text>
@@ -122,6 +154,7 @@ const Inscription = (props) => {
           <Text style={styles.loginText}>Connexion</Text>
         </TouchableOpacity>
       </View>
+      <FlashMessage position="top" />
     </View >
   );
 };

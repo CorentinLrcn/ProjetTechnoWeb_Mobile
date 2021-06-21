@@ -43,7 +43,7 @@ const Navigation = () => {
                 headerLeft: () => HeaderButton(navigation)
             })} />
 
-            <Stack.Screen name="Application" component={TabNavigation} options={({ navigation }) => ({
+            <Stack.Screen name="Application" component={TabNavigation} options={() => ({
                 headerStyle: { height: 0 },
                 headerTitle: null,
                 headerLeft: null

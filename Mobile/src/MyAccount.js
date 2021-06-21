@@ -53,7 +53,7 @@ const MyAccount = (props) => {
                     </View>
                     <View style={{ paddingTop: '2.5%', width: '100%', alignItems: 'center' }}>
                         <Text style={styles.label}>Date de Naissance</Text>
-                        <Text style={styles.text}>{dateNaissance}</Text>
+                        <Text style={styles.text}>{dateNaissance.slice(0,10)}</Text>
                     </View>
                     <View style={{ paddingTop: '2.5%', width: '100%', alignItems: 'center' }}>
                         <Text style={styles.label}>E-mail</Text>
@@ -97,6 +97,14 @@ const MyAccount = (props) => {
                 }}
             >
                 <Text style={styles.saveText}>Enregistrer</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.logOutBtn}
+                onPress={() => {
+                    props.navigation.popToTop()
+                }}
+            >
+                <Text style={styles.saveText}>Se Déconnecter</Text>
             </TouchableOpacity>
         </ScrollView>
     )
@@ -163,6 +171,16 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         backgroundColor: "#1abc9c",
         paddingHorizontal: "10%",
+    },
+    logOutBtn: {
+        width: "80%",
+        borderRadius: 5,
+        height: 50,
+        alignSelf: "center",
+        justifyContent: "center",
+        backgroundColor: "red",
+        paddingHorizontal: "10%",
+        marginTop: '2.5%'
     },
     saveText: {
         fontWeight: "bold",
