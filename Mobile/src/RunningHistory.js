@@ -3,30 +3,38 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import { API_ROOT_URL } from '../config'
 import { useIsFocused } from "@react-navigation/native"
+import DeletionModal from './DeletionModal'
 
 
 const RunningHistory = (props) => {
-    const [duree, setDuree] = useState([]);
-    const [kilometres, setKilometres] = useState([]);
-    const [date, setDate] = useState([]);
+    //const [duree, setDuree] = useState([]);
+    //const [kilometres, setKilometres] = useState([]);
+    //const [date, setDate] = useState([]);
+    const [courses, setCourses] = useState([])
+    const [idUser, setIdUser] = useState('')
+
+    const [isVisible, setIsVisible] = useState(false)
+    const [currentItem, setCurrentItem] = useState('')
 
     const isFocused = useIsFocused()
 
     const InfoCourse = async (id) => {
-        console.log('ici')
         await axios.get(`${API_ROOT_URL}/course/${id}`)
             .then((response) => {
-                setDuree(duree => [...duree, response.data.duree]);
-                setKilometres(kilometres => [...kilometres, response.data.kilometres]);
-                setDate(date => [...date, (response.data.date).slice(0, 10)]);
+                //setDuree(duree => [...duree, response.data.duree]);
+                //setKilometres(kilometres => [...kilometres, response.data.kilometres]);
+                //setDate(date => [...date, (response.data.date).slice(0, 10)]);
+                console.log(response.data)
+                setCourses(courses => [...courses, { id: id, duree: response.data.duree, distance: response.data.kilometres, date: response.data.date }])
             })
     }
 
     const fetchInfo = async (email) => {
         await axios.get(`${API_ROOT_URL}/utilisateur/${email}`)
             .then((response) => {
+                setIdUser(response.data._id)
                 response.data.tableauCourse.map((prop, key) => {
-                    console.log(prop)
+                    //console.log(prop)
                     if (prop != '')
                         InfoCourse(prop)
 
@@ -37,10 +45,11 @@ const RunningHistory = (props) => {
 
     useEffect(() => {
         if (isFocused) {
-            console.log('email = ' + JSON.stringify(props.route.params.email))
-            setDuree([])
-            setKilometres([])
-            setDate([])
+            //console.log('email = ' + JSON.stringify(props.route.params.email))
+            //setDuree([])
+            //setKilometres([])
+            //setDate([])
+            setCourses([])
             fetchInfo(props.route.params.email)
         }
     }, [isFocused])
@@ -56,20 +65,36 @@ const RunningHistory = (props) => {
                     <Text style={styles.tableHeader}>Date</Text>
                 </View>
                 {
-                    duree.map((prop, key) => {
+                    courses.map((item) => {
                         return (
-                            <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'center', borderBottomWidth: 1 ,borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
-                                <Text style={styles.tableTimeRows} key={key}>{(prop / 3600).toFixed(0) * 1} h {(prop / 60).toFixed(0) * 1} min {prop % 60} s</Text>
-                                <Text style={styles.tableDistRows} key={key}>{kilometres[key]} m</Text>
-                                <Text style={styles.tableDateRows} key={key}>{date[key]}</Text>
+                            <View 
+                                style={{
+                                    flexDirection: 'row',
+                                    width: '100%',
+                                    justifyContent: 'center',
+                                    borderBottomWidth: 1,
+                                    borderBottomLeftRadius: 10,
+                                    borderBottomRightRadius: 10
+                                }}
+                                onTouchEndCapture={() => {
+                                    setCurrentItem(item.id)
+                                    setIsVisible(true)
+                                }}
+                            >
+                                <Text style={styles.tableTimeRows} key={item.id}>{(item.duree / 3600).toFixed(0) * 1} h {(item.duree / 60).toFixed(0) * 1} min {item.duree % 60} s</Text>
+                                <Text style={styles.tableDistRows} key={item.id}>{item.distance} m</Text>
+                                <Text style={styles.tableDateRows} key={item.id}>{item.date}</Text>
                             </View>
                         );
                     })
                 }
-                {
-
-                }
             </View>
+            {/* <DeletionModal
+                onClose={() => setIsVisible(false)}
+                visible={isVisible}
+                currentItem={currentItem}
+                idUser={idUser}
+            /> */}
         </ScrollView>
     )
 }
