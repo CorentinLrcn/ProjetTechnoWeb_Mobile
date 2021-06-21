@@ -36,6 +36,7 @@ const Inscription = (props) => {
     else if (dateDeNaissance === new Date(`0001-01-01`)) showMessage({ message: "Date de naissance non remplie", type: "warning" })
     else if (email === '') showMessage({ message: "E-mail non rempli", type: "warning" })
     else if (motDePasse === '') showMessage({ message: "Mot de passe non rempli", type: "warning" })
+    else VerifIfEmailTaken()
   }
 
   const VerifIfEmailTaken = async () => {
@@ -139,7 +140,6 @@ const Inscription = (props) => {
           onPress={() => {
             setDate(new Date(anneeNaissance + '-' + moisNaissance + '-' + jourNaissance))
             VerifNotEmpty()
-            VerifIfEmailTaken()
           }}
         >
           <Text style={styles.loginText}>Inscription</Text>
