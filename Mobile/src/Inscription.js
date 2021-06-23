@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
@@ -26,7 +26,7 @@ const Inscription = (props) => {
   const [jourNaissance, setJourN] = useState("01");
   const [moisNaissance, setMoisN] = useState("01");
   const [anneeNaissance, setAnneeN] = useState("0001");
-  const [dateDeNaissance, setDate] = useState(new Date(`${anneeNaissance}-${moisNaissance}-${jourNaissance}`));
+  const [dateDeNaissance, setDate] = useState(new Date("0001-01-01"));
 
   const { navigation } = props;
 
@@ -43,21 +43,26 @@ const Inscription = (props) => {
     console.log('bonjour')
     await axios.get(`${API_ROOT_URL}/utilisateur/${email}`)
       .then((response) => {
-          console.log('response : ' + JSON.stringify(response))
-          if (response.data !== '') {
-            showMessage({ 
-              message: `Un compte existe déjà pour ${email}`, 
-              type: 'danger' 
-            })
-          } else {
-            Ajout(prenom, nom, email, dateDeNaissance, motDePasse)
-            navigation.navigate('Connexion')
-          }
+        console.log('response : ' + JSON.stringify(response))
+        if (response.data !== '') {
+          showMessage({
+            message: `Un compte existe déjà pour ${email}`,
+            type: 'danger'
+          })
+        } else {
+          Ajout(prenom, nom, email, dateDeNaissance, motDePasse)
+          navigation.navigate('Connexion')
+        }
       })
       .catch((err) => {
         console.log(`Erreur : ${err}`)
       })
-}
+  }
+
+  useEffect(() => {
+    console.log(dateDeNaissance)
+    VerifNotEmpty()
+  }, [dateDeNaissance])
 
   return (
     <View style={styles.container}>
@@ -139,7 +144,6 @@ const Inscription = (props) => {
           style={styles.signinBtn}
           onPress={() => {
             setDate(new Date(anneeNaissance + '-' + moisNaissance + '-' + jourNaissance))
-            VerifNotEmpty()
           }}
         >
           <Text style={styles.loginText}>Inscription</Text>
