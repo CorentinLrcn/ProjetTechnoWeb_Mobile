@@ -1,34 +1,49 @@
 import axios from 'axios';
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, StatusBar, TouchableWithoutFeedback } from 'react-native';
 import { API_ROOT_URL } from '../config';
 
 
 // create a component
 const DeletionModal = ({ visible, onClose, currentItem, idUser }) => {
-    const [newTableRun, setNewTableRun] = useState([])
+    const [isFirst, setIsFirst] = useState(true)
 
-    const reloadTableRunUser = async (idUser) => {
-        await axios.put(`${API_ROOT_URL}/utilisateur/runTable/${idUser}?courses=${newTableRun}`)
-            .then(() => {
-                console.log('Tableau des courses à jour')
-            })
+    const reloadTableRunUser = async (idUser, idRun) => {
+        console.log(isFirst)
+        isFirst ? (
+            await axios.put(`${API_ROOT_URL}/utilisateur/runTable/${idUser}?courses=${idRun}`)
+                .then(() => {
+                    console.log('Tableau des courses à jour')
+                    setIsFirst(false)
+                })
+        ) : (
+            await axios.post(`${API_ROOT_URL}/utilisateur/${idUser}?course=${idRun}`)
+                .then(() => {
+                    console.log('Tableau des courses à jour')
+                })
+        )
     }
-    
+
     const getNewTableRunUser = async (idUser) => {
         await axios.get(`${API_ROOT_URL}/course/user/${idUser}`)
             .then((res) => {
-                res.data.map((item) => {
-                    setNewTableRun(newTableRun => [...newTableRun, item.id])
-                })
-                reloadTableRunUser(idUser)
+                //console.log(res.data.length)
+                if (res.data.length === 0) {
+                    //console.log('Egal a tableau vide')
+                    reloadTableRunUser(idUser, '')
+                } else {
+                    res.data.map((item) => {
+                        reloadTableRunUser(idUser, item._id)
+                    })
+                }
             })
     }
-    
+
     const deleteRun = async (id, idUser) => {
         await axios.delete(`${API_ROOT_URL}/course/${id}`)
             .then((res) => {
-                console.log(res)
+                //console.log(res)
+                setIsFirst(true)
                 getNewTableRunUser(idUser)
             })
             .catch(() => console.log('Il y a un blem'))

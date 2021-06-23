@@ -250,16 +250,15 @@ const Running = (props) => {
 
     return (
         <View style={styles.container}>
-            <View style={{ height: '20%', width: '100%', alignItems: 'center' }}>
-                <Image
-                    style={{ height: 150, width: '100%', top: 5 }}
-                    source={{
-                        uri: 'https://cdn.discordapp.com/attachments/771665604977491978/840167041507655680/logo_small_mobile.png'
-                    }} />
-                <Text style={{ fontSize: 25, color: '#e00974', marginTop: '-5%', marginBottom: '2.5%' }}>{day} / {month} / {year}</Text>
-            </View>
+            <Image
+                style={{ height: 150, width: '100%' }}
+                source={{
+                    uri: 'https://cdn.discordapp.com/attachments/771665604977491978/840167041507655680/logo_small_mobile.png'
+                }}
+            />
+            <Text style={{ fontSize: 25, color: '#e00974', marginTop: '-5%', marginBottom: '2.5%' }}>{day} / {month} / {year}</Text>
             <View
-                style={{ height: '40%', width: '95%', alignItems: 'center', marginTop: '5%', borderWidth: 7.5, borderRadius: 10, borderTopColor: '#e00974', borderLeftColor: '#e00974', borderRightColor: '#1abc9c', borderBottomColor: '#1abc9c' }}
+                style={{ height: '40%', width: '95%', alignItems: 'center', marginVertical: '2.5%', borderWidth: 7.5, borderRadius: 10, borderTopColor: '#e00974', borderLeftColor: '#e00974', borderRightColor: '#1abc9c', borderBottomColor: '#1abc9c' }}
                 pointerEvents="none"
             >
                 {region.latitude != null &&
@@ -273,38 +272,37 @@ const Running = (props) => {
                     </MapView>
                 }
             </View>
-            <View style={styles.infoRun}>
-                <Text style={styles.time}>{distanceCourse} m</Text>
-                <View style={styles.timer}>
-                    {areHoursShown &&
-                        <Text style={styles.time}>{(counter / 3600).toFixed(0) * 1} h </Text>
-                    }
-                    {areMinutesShown &&
-                        <Text style={styles.time}>{(counter / 60).toFixed(0) * 1} min </Text>
-                    }
-                    <Text style={styles.time}>{counter % 60} s</Text>
-                </View>
-                <View style={styles.block}>
-                    <TouchableOpacity
-                        style={styles.playBtn}
-                        onPress={() => start()}
-                    >
-                        <Ionicons name="play" size={25} color='white' />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.pauseBtn}
-                        onPress={() => pause()}
-                    >
-                        <Ionicons name="pause" size={25} color='white' />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.stopBtn}
-                        onPress={() => stop()}
-                    >
-                        <Ionicons name="stop" size={25} color='white' />
-                    </TouchableOpacity>
-                </View>
+            <Text style={styles.time}>{distanceCourse} m</Text>
+            <View style={styles.timer}>
+                {areHoursShown &&
+                    <Text style={styles.time}>{(counter / 3600).toFixed(0) * 1} h </Text>
+                }
+                {areMinutesShown &&
+                    <Text style={styles.time}>{(counter / 60).toFixed(0) * 1} min </Text>
+                }
+                <Text style={styles.time}>{counter % 60} s</Text>
             </View>
+            <View style={styles.block}>
+                <TouchableOpacity
+                    style={styles.playBtn}
+                    onPress={() => start()}
+                >
+                    <Ionicons name="play" size={25} color='white' />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.pauseBtn}
+                    onPress={() => pause()}
+                >
+                    <Ionicons name="pause" size={25} color='white' />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.stopBtn}
+                    onPress={() => stop()}
+                >
+                    <Ionicons name="stop" size={25} color='white' />
+                </TouchableOpacity>
+            </View>
+
         </View>
     )
 }

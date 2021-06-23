@@ -18,14 +18,16 @@ const RunningHistory = (props) => {
 
     const isFocused = useIsFocused()
 
-    const InfoCourse = async (id) => {
+    const InfoCourse = async (id, key) => {
+        console.log('id: ' + id)
         await axios.get(`${API_ROOT_URL}/course/${id}`)
             .then((response) => {
                 //setDuree(duree => [...duree, response.data.duree]);
                 //setKilometres(kilometres => [...kilometres, response.data.kilometres]);
                 //setDate(date => [...date, (response.data.date).slice(0, 10)]);
-                console.log(response.data)
-                setCourses(courses => [...courses, { id: id, duree: response.data.duree, distance: response.data.kilometres, date: response.data.date }])
+                //console.log(response.data)
+                setCourses(courses => [...courses, { id: id, key: key, duree: response.data.duree, distance: response.data.kilometres, date: response.data.date.slice(0,10) }])
+                console.log('courses : ' + JSON.stringify(courses))
             })
     }
 
@@ -34,9 +36,9 @@ const RunningHistory = (props) => {
             .then((response) => {
                 setIdUser(response.data._id)
                 response.data.tableauCourse.map((prop, key) => {
-                    //console.log(prop)
+                    console.log(prop)
                     if (prop != '')
-                        InfoCourse(prop)
+                        InfoCourse(prop, key)
 
                 })
             })
@@ -57,44 +59,45 @@ const RunningHistory = (props) => {
     return (
         <ScrollView style={styles.background}>
             <Text style={styles.title}>Tableau des courses</Text>
-            <View style={styles.container}>
-                <Text style={styles.text}>Courses</Text>
-                <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'center', borderTopWidth:1, borderBottomWidth:1 }}>
-                    <Text style={styles.tableHeader}>Durée</Text>
-                    <Text style={styles.tableHeaderMiddle}>Distance</Text>
-                    <Text style={styles.tableHeader}>Date</Text>
+            <View style={styles.border}>
+                <View style={styles.container}>
+                    <Text style={styles.text}>Courses</Text>
+                    <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'center', borderTopWidth: 1 }}>
+                        <Text style={styles.tableHeaderTime}>Durée</Text>
+                        <Text style={styles.tableHeaderMiddle}>Distance</Text>
+                        <Text style={styles.tableHeaderDate}>Date</Text>
+                    </View>
+                    {
+                        courses.map((item) => {
+                            return (
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        width: '100%',
+                                        justifyContent: 'center',
+                                        borderTopWidth: 1,
+                                    }}
+                                    onTouchEndCapture={() => {
+                                        setCurrentItem(item.id)
+                                        setIsVisible(true)
+                                    }}
+                                    key={item.key}
+                                >
+                                    <Text style={styles.tableTimeRows} >{(item.duree / 3600).toFixed(0) * 1} h {(item.duree / 60).toFixed(0) * 1} min {item.duree % 60} s</Text>
+                                    <Text style={styles.tableDistRows} >{item.distance} m</Text>
+                                    <Text style={styles.tableDateRows} >{item.date}</Text>
+                                </View>
+                            );
+                        })
+                    }
                 </View>
-                {
-                    courses.map((item) => {
-                        return (
-                            <View 
-                                style={{
-                                    flexDirection: 'row',
-                                    width: '100%',
-                                    justifyContent: 'center',
-                                    borderBottomWidth: 1,
-                                    borderBottomLeftRadius: 10,
-                                    borderBottomRightRadius: 10
-                                }}
-                                onTouchEndCapture={() => {
-                                    setCurrentItem(item.id)
-                                    setIsVisible(true)
-                                }}
-                            >
-                                <Text style={styles.tableTimeRows} key={item.id}>{(item.duree / 3600).toFixed(0) * 1} h {(item.duree / 60).toFixed(0) * 1} min {item.duree % 60} s</Text>
-                                <Text style={styles.tableDistRows} key={item.id}>{item.distance} m</Text>
-                                <Text style={styles.tableDateRows} key={item.id}>{item.date}</Text>
-                            </View>
-                        );
-                    })
-                }
             </View>
-            {/* <DeletionModal
+            <DeletionModal
                 onClose={() => setIsVisible(false)}
                 visible={isVisible}
                 currentItem={currentItem}
                 idUser={idUser}
-            /> */}
+            />
         </ScrollView>
     )
 }
@@ -106,7 +109,6 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         flex: 1,
-        backgroundColor: 'pink',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -116,68 +118,81 @@ const styles = StyleSheet.create({
         fontSize: 40,
         textAlign: 'center'
     },
-    container: {
+    border: {
         alignItems: 'center',
         marginVertical: '15%',
-        backgroundColor: '#e00974',
+        backgroundColor: 'white',
         marginHorizontal: '2.5%',
-        borderLeftWidth: 1, 
-        borderRightWidth: 1, 
-        borderTopWidth:1,
-        borderRadius: 10
+        borderWidth: 7.5,
+        borderRadius: 10,
+        borderTopColor: '#e00974',
+        borderLeftColor: '#e00974',
+        borderRightColor: '#1abc9c',
+        borderBottomColor: '#1abc9c'
+    },
+    container: {
+        //alignItems: 'center',
+        backgroundColor: 'white',
     },
     text: {
-        marginVertical: '2.5%',
+        paddingVertical: '2.5%',
         fontSize: 20,
-        color: 'white',
+        color: '#e00974',
         alignItems: 'center',
         fontWeight: 'bold',
-        backgroundColor: '#e00974'
+        //backgroundColor: '#e00974',
+        minWidth: '100%',
+        textAlign: 'center',
+        //borderBottomWidth: 1
     },
-    tableHeader: {
+    tableHeaderTime: {
         paddingVertical: '2%',
         fontSize: 20,
-        color: 'white',
+        color: 'black',
         textAlign: 'center',
         width: '37.5%',
-        fontWeight: 'bold',
-        backgroundColor: '#1abc9c'
+        fontWeight: 'bold'
+    },
+    tableHeaderDate: {
+        paddingVertical: '2%',
+        fontSize: 20,
+        color: 'black',
+        textAlign: 'center',
+        width: '35%',
+        fontWeight: 'bold'
     },
     tableHeaderMiddle: {
         paddingVertical: '2%',
         fontSize: 20,
         color: 'white',
         textAlign: 'center',
-        width: '25%',
+        width: '27.5%',
         fontWeight: 'bold',
-        borderRightWidth: 1,
-        borderLeftWidth: 1
+        //borderRightWidth: 1,
+        //borderLeftWidth: 1,
+        backgroundColor: '#e00974'
     },
     tableTimeRows: {
-        paddingVertical: '2%',
+        paddingVertical: '2.5%',
         fontSize: 20,
         textAlign: 'center',
         width: '37.5%',
-        backgroundColor: 'white',
-        borderBottomLeftRadius: 10
     },
     tableDistRows: {
         paddingVertical: '2%',
         fontSize: 20,
         textAlign: 'center',
-        //backgroundColor: 'white',
+        backgroundColor: '#e00974',
         color: 'white',
-        width: '25%',
-        borderRightWidth: 1,
-        borderLeftWidth: 1
+        width: '27.5%',
+        //borderRightWidth: 1,
+        //borderLeftWidth: 1
     },
     tableDateRows: {
         paddingVertical: '2%',
         fontSize: 20,
         textAlign: 'center',
-        width: '37.5%',
-        backgroundColor: 'white',
-        borderBottomRightRadius: 10
+        width: '35%'
     },
     textInput: {
         fontSize: 20,

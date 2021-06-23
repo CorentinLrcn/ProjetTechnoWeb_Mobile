@@ -180,7 +180,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         backgroundColor: "red",
         paddingHorizontal: "10%",
-        marginTop: '2.5%'
+        marginTop: '2.5%',
+        marginBottom: '5%'
     },
     saveText: {
         fontWeight: "bold",
