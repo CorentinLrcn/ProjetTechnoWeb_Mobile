@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
+import DatePicker from "react-native-datepicker";
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { API_ROOT_URL } from "../config";
@@ -23,17 +24,17 @@ const Inscription = (props) => {
   const [motDePasse, setMotDePasse] = useState("");
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
-  const [jourNaissance, setJourN] = useState("01");
+  /*const [jourNaissance, setJourN] = useState("01");
   const [moisNaissance, setMoisN] = useState("01");
-  const [anneeNaissance, setAnneeN] = useState("0001");
-  const [dateDeNaissance, setDate] = useState(new Date("0001-01-01"));
+  const [anneeNaissance, setAnneeN] = useState("0001");*/
+  const [dateDeNaissance, setDate] = useState('');
 
   const { navigation } = props;
 
   const VerifNotEmpty = () => {
     if (nom === '') showMessage({ message: "Nom non rempli", type: "warning" })
     else if (prenom === '') showMessage({ message: "Prénom non rempli", type: "warning" })
-    else if (dateDeNaissance === new Date(`0001-01-01`)) showMessage({ message: "Date de naissance non remplie", type: "warning" })
+    else if (dateDeNaissance === '') showMessage({ message: "Date de naissance non remplie", type: "warning" })
     else if (email === '') showMessage({ message: "E-mail non rempli", type: "warning" })
     else if (motDePasse === '') showMessage({ message: "Mot de passe non rempli", type: "warning" })
     else VerifIfEmailTaken()
@@ -58,11 +59,6 @@ const Inscription = (props) => {
         console.log(`Erreur : ${err}`)
       })
   }
-
-  useEffect(() => {
-    console.log(dateDeNaissance)
-    VerifNotEmpty()
-  }, [dateDeNaissance])
 
   return (
     <View style={styles.container}>
@@ -89,7 +85,7 @@ const Inscription = (props) => {
           />
         </View>
         <View style={styles.inputView2}>
-          <View style={styles.inputViewJM}>
+          {/*<View style={styles.inputViewJM}>
             <TextInput
               style={styles.TextInput}
               placeholder="Jour"
@@ -120,7 +116,34 @@ const Inscription = (props) => {
               keyboardType='numeric'
               maxLength={4}
             />
-          </View>
+      </View>*/}
+          <DatePicker
+            date={dateDeNaissance}
+            mode="date"
+            placeholder="Date de Naissance"
+            style={styles.calendar}
+            format="DD-MM-YYYY"
+            minDate="01-01-1900"
+            maxDate="31-12-2050"
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            customStyles={{
+              dateIcon: {
+                display: 'none',
+                /*position: 'absolute',
+                left: 0,
+                top: 4,
+                marginLeft: 0,*/
+              },
+              dateInput: {
+                borderWidth: 0,
+                placeholderTextColor: 'red'
+              },
+            }}
+            onDateChange={(date) => {
+              setDate(date);
+            }}
+          />
         </View>
         <View style={styles.inputView}>
           <TextInput
@@ -143,6 +166,7 @@ const Inscription = (props) => {
         <TouchableOpacity
           style={styles.signinBtn}
           onPress={() => {
+            console.log(anneeNaissance + '-' + moisNaissance + '-' + jourNaissance)
             setDate(new Date(anneeNaissance + '-' + moisNaissance + '-' + jourNaissance))
           }}
         >
@@ -172,7 +196,6 @@ const styles = StyleSheet.create({
   },
 
   form: {
-    backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
     width: '80%',
@@ -186,7 +209,7 @@ const styles = StyleSheet.create({
   },
 
   inputView: {
-    backgroundColor: "#e0e0e0",
+    backgroundColor: "white",
     borderRadius: 10,
     width: "70%",
     height: 40,
@@ -218,6 +241,12 @@ const styles = StyleSheet.create({
     height: 40,
     marginLeft: 5,
     justifyContent: 'center'
+  },
+
+  calendar: {
+    width: '100%',
+    backgroundColor: "white",
+    borderRadius: 10
   },
 
   TextInput: {
