@@ -24,17 +24,17 @@ const Inscription = (props) => {
   const [motDePasse, setMotDePasse] = useState("");
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
-  /*const [jourNaissance, setJourN] = useState("01");
-  const [moisNaissance, setMoisN] = useState("01");
-  const [anneeNaissance, setAnneeN] = useState("0001");*/
-  const [dateDeNaissance, setDate] = useState('');
+  const [jourNaissance, setJourN] = useState("");
+  const [moisNaissance, setMoisN] = useState("");
+  const [anneeNaissance, setAnneeN] = useState("");
+  //const [dateDeNaissance, setDate] = useState('');
 
   const { navigation } = props;
 
   const VerifNotEmpty = () => {
     if (nom === '') showMessage({ message: "Nom non rempli", type: "warning" })
     else if (prenom === '') showMessage({ message: "Prénom non rempli", type: "warning" })
-    else if (dateDeNaissance === '') showMessage({ message: "Date de naissance non remplie", type: "warning" })
+    else if (jourNaissance === '' || moisNaissance === '' || anneeNaissance === '') showMessage({ message: "Date de naissance non remplie", type: "warning" })
     else if (email === '') showMessage({ message: "E-mail non rempli", type: "warning" })
     else if (motDePasse === '') showMessage({ message: "Mot de passe non rempli", type: "warning" })
     else VerifIfEmailTaken()
@@ -51,7 +51,7 @@ const Inscription = (props) => {
             type: 'danger'
           })
         } else {
-          Ajout(prenom, nom, email, dateDeNaissance, motDePasse)
+          Ajout(prenom, nom, email, new Date(`${anneeNaissance}-${moisNaissance}-${jourNaissance}`), motDePasse)
           navigation.navigate('Connexion')
         }
       })
@@ -85,7 +85,7 @@ const Inscription = (props) => {
           />
         </View>
         <View style={styles.inputView2}>
-          {/*<View style={styles.inputViewJM}>
+          <View style={styles.inputViewJM}>
             <TextInput
               style={styles.TextInput}
               placeholder="Jour"
@@ -116,8 +116,8 @@ const Inscription = (props) => {
               keyboardType='numeric'
               maxLength={4}
             />
-      </View>*/}
-          <DatePicker
+          </View>
+          {/*<DatePicker
             date={dateDeNaissance}
             mode="date"
             placeholder="Date de Naissance"
@@ -129,11 +129,7 @@ const Inscription = (props) => {
             cancelBtnText="Cancel"
             customStyles={{
               dateIcon: {
-                display: 'none',
-                /*position: 'absolute',
-                left: 0,
-                top: 4,
-                marginLeft: 0,*/
+                display: 'none'
               },
               dateInput: {
                 borderWidth: 0,
@@ -143,7 +139,7 @@ const Inscription = (props) => {
             onDateChange={(date) => {
               setDate(date);
             }}
-          />
+          />*/}
         </View>
         <View style={styles.inputView}>
           <TextInput
@@ -167,7 +163,8 @@ const Inscription = (props) => {
           style={styles.signinBtn}
           onPress={() => {
             console.log(anneeNaissance + '-' + moisNaissance + '-' + jourNaissance)
-            setDate(new Date(anneeNaissance + '-' + moisNaissance + '-' + jourNaissance))
+            //setDate(new Date(anneeNaissance + '-' + moisNaissance + '-' + jourNaissance))
+            VerifNotEmpty()
           }}
         >
           <Text style={styles.loginText}>Inscription</Text>
@@ -209,7 +206,7 @@ const styles = StyleSheet.create({
   },
 
   inputView: {
-    backgroundColor: "white",
+    backgroundColor: "#e0e0e0",
     borderRadius: 10,
     width: "70%",
     height: 40,
