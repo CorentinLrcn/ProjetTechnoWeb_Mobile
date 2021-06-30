@@ -1,9 +1,10 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, TextInput, View, ScrollView, Picker } from 'react-native'
+import { StyleSheet, Text, TextInput, View, ScrollView, Picker, Image } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { API_ROOT_URL } from '../config'
 import { useIsFocused } from "@react-navigation/native"
+import * as ImagePicker from 'expo-image-picker'
 
 const saveOnDB = async (taille, poids, sexe, id) => {
     const data = await axios.put(`${API_ROOT_URL}/utilisateur/${id}?taille=${taille}&poids=${poids}&sexe=${sexe}`)
@@ -17,8 +18,8 @@ const MyAccount = (props) => {
     const [taille, setTaille] = useState(10)
     const [poids, setPoids] = useState(0)
     const [sexe, setSexe] = useState('')
-    const [dateNaissance, setDateNaissance] = useState('01-01-2000')
-
+    const [dateNaissance, setDateNaissance] = useState('')
+    const [avatar, setAvatar] = useState({ uri: 'https://cdn.discordapp.com/attachments/771665604977491978/857562721758609449/image_base_profile.png' })
     const isFocused = useIsFocused()
 
     const fetchInfo = async (email) => {
@@ -36,6 +37,31 @@ const MyAccount = (props) => {
             })
     }
 
+    const avatarClicked = async () => {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
+
+        if (!permissionResult.granted) {
+            alert("Permission to access camera roll is required !")
+            return
+        }
+
+        const pickerResult = await ImagePicker.launchImageLibraryAsync()
+        console.log(JSON.stringify(pickerResult))
+        
+        if (pickerResult.cancelled) return;
+
+        setAvatar({ uri: pickerResult.uri })
+        //console.log(avatar)
+    }
+
+    /*const permissionImage = async () => {
+        await ImagePicker.getMediaLibraryPermissionAsync()
+    }
+
+    useEffect(() => {
+        permissionImage()
+    }, [])*/
+
     useEffect(() => {
         if (isFocused) fetchInfo(props.route.params.email)
     }, [isFocused])
@@ -45,6 +71,14 @@ const MyAccount = (props) => {
             <Text style={styles.title}>Informations profil</Text>
             <View style={styles.border}>
                 <View style={styles.container}>
+                    <TouchableOpacity
+                        onPress={avatarClicked}
+                    >
+                        <Image
+                            style={{ height: 300, width: 300, marginVertical: '2.5%' }}
+                            source={avatar}
+                        />
+                    </TouchableOpacity>
                     <Text style={styles.label}>Nom</Text>
                     <Text style={styles.text}>{nom}</Text>
                     <View style={{ paddingTop: '2.5%', width: '100%', alignItems: 'center' }}>
@@ -53,7 +87,7 @@ const MyAccount = (props) => {
                     </View>
                     <View style={{ paddingTop: '2.5%', width: '100%', alignItems: 'center' }}>
                         <Text style={styles.label}>Date de Naissance</Text>
-                        <Text style={styles.text}>{dateNaissance.slice(0,10)}</Text>
+                        <Text style={styles.text}>{dateNaissance.slice(0, 10)}</Text>
                     </View>
                     <View style={{ paddingTop: '2.5%', width: '100%', alignItems: 'center' }}>
                         <Text style={styles.label}>E-mail</Text>
@@ -76,7 +110,7 @@ const MyAccount = (props) => {
                     <View style={{ paddingTop: '2.5%', width: '100%', alignItems: 'center' }}>
                         <Text style={styles.label}>Sexe</Text>
                         {/*<TextInput style={styles.textInput} value={sexe} onChangeText={setSexe} />*/}
-                        <View style={{ borderWidth: 1, paddingLeft: '21.5%', borderColor: 'black' }}>
+                        <View style={{ borderWidth: 1, paddingLeft: '21.5%', borderColor: 'black', marginBottom: '2.5%' }}>
                             <Picker
                                 selectedValue={sexe}
                                 style={{ height: 50, width: 150, color: 'black' }}
