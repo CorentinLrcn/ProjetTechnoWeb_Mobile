@@ -37,6 +37,7 @@ const Inscription = (props) => {
     else if (jourNaissance === '' || moisNaissance === '' || anneeNaissance === '') showMessage({ message: "Date de naissance non remplie", type: "warning" })
     else if (email === '') showMessage({ message: "E-mail non rempli", type: "warning" })
     else if (motDePasse === '') showMessage({ message: "Mot de passe non rempli", type: "warning" })
+    else if (motDePasse.length < 8) showMessage({ message: "Le mot de passe doit faire au moins 8 caractères", type: "warning" })
     else VerifIfEmailTaken()
   }
 
