@@ -6,9 +6,17 @@ import { API_ROOT_URL } from '../config'
 import { useIsFocused } from "@react-navigation/native"
 import * as ImagePicker from 'expo-image-picker'
 
-const saveOnDB = async (taille, poids, sexe, id) => {
-    const data = await axios.put(`${API_ROOT_URL}/utilisateur/${id}?taille=${taille}&poids=${poids}&sexe=${sexe}`)
-        .then((response) => console.log(JSON.stringify(response)))
+const saveOnDB = async (taille, poids, sexe, photo, id) => {
+    console.log(photo.uri)
+    if (photo.uri === 'https://cdn.discordapp.com/attachments/771665604977491978/857562721758609449/image_base_profile.png') {
+        console.log('cas de base')
+        await axios.put(`${API_ROOT_URL}/utilisateur/${id}?taille=${taille}&poids=${poids}&sexe=${sexe}`, { "photo": "" })
+            .then((response) => console.log(JSON.stringify(response)))
+    } else {
+        console.log('autre cas')
+        await axios.put(`${API_ROOT_URL}/utilisateur/${id}?taille=${taille}&poids=${poids}&sexe=${sexe}`, { "photo": photo })
+            .then((response) => console.log(JSON.stringify(response)))
+    }
 }
 
 const MyAccount = (props) => {
@@ -34,6 +42,7 @@ const MyAccount = (props) => {
                 setTaille(response.data.taille)
                 setPoids(response.data.poids)
                 setSexe(response.data.sexe)
+                if (response.data.photo !== '') setAvatar({ uri: response.data.photo })
             })
     }
 
@@ -47,7 +56,7 @@ const MyAccount = (props) => {
 
         const pickerResult = await ImagePicker.launchImageLibraryAsync()
         console.log(JSON.stringify(pickerResult))
-        
+
         if (pickerResult.cancelled) return;
 
         setAvatar({ uri: pickerResult.uri })
@@ -63,7 +72,10 @@ const MyAccount = (props) => {
     }, [])*/
 
     useEffect(() => {
-        if (isFocused) fetchInfo(props.route.params.email)
+        if (isFocused) {
+            fetchInfo(props.route.params.email)
+            console.log(avatar)
+        }
     }, [isFocused])
 
     return (
@@ -127,7 +139,7 @@ const MyAccount = (props) => {
             <TouchableOpacity
                 style={styles.saveBtn}
                 onPress={() => {
-                    saveOnDB(taille, poids, sexe, id)
+                    saveOnDB(taille, poids, sexe, avatar, id)
                 }}
             >
                 <Text style={styles.saveText}>Enregistrer</Text>
