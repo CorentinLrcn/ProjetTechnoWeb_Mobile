@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, TouchableOpacity, View, Button, Text, Image, Alert, SafeAreaView } from 'react-native'
+import { StyleSheet, TouchableOpacity, View, Text, Image, Alert } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import MapView, { Marker, Polyline } from "react-native-maps"
-import Geolocation from 'react-native-geolocation-service'
 import * as Location from 'expo-location'
 import axios from 'axios'
 import { API_ROOT_URL } from '../config'
@@ -23,41 +22,6 @@ const Running = (props) => {
     const [areHoursShown, setAreHoursShown] = useState(false)
     const [areMinutesShown, setAreMinutesShown] = useState(false)
     const [widthLine, setWidthLine] = useState(0)
-
-    const tabVilles = [
-        {
-            latitude: 47.3215806,
-            longitude: 5.0414701
-        },
-        {
-            latitude: 45.3869468,
-            longitude: 4.2858545
-        },
-        {
-            latitude: 45.4401467,
-            longitude: 4.3873058
-        },
-        {
-            latitude: 43.6044622,
-            longitude: 1.4442469
-        },
-        {
-            latitude: 44.841225,
-            longitude: -0.5800364
-        },
-        {
-            latitude: 48.3905283,
-            longitude: -4.4860088
-        },
-        {
-            latitude: 50.6365654,
-            longitude: 3.0635282
-        },
-        {
-            latitude: 48.584614,
-            longitude: 7.7507127
-        }
-    ]
 
     const [region, setRegion] = useState({
         latitude: null,
@@ -116,7 +80,6 @@ const Running = (props) => {
 
     const createRun = async (distance, duree, jour, mois, annee, id) => {
         const date = `${annee}-${mois}-${jour}`
-        const vitesseMoyenne = (distance / 1000) / (duree / 3600)
         const body = {
             metres: distance / 1000,
             duree: duree,
@@ -124,11 +87,10 @@ const Running = (props) => {
         }
         await axios.post(`${API_ROOT_URL}/course?metres=${distance}&duree=${duree}&date=${date}&idRunner=${id}`, body)
             .then((res) => {
-                console.log(res.data);
                 addRun(res.data.idRunner, res.data._id)
             })
-            .catch(() => {
-                //console.log('ça veut pas')
+            .catch((err) => {
+                console.log(err)
             })
     }
 
@@ -137,8 +99,8 @@ const Running = (props) => {
             .then((res) => {
                 console.log(res.data);
             })
-            .catch(() => {
-                console.log("ca veut pas");
+            .catch((err) => {
+                console.log(err);
             })
     }
 
@@ -149,12 +111,10 @@ const Running = (props) => {
 
     useEffect(() => {
         if ((counter / 3600) >= 1) setAreHoursShown(true)
-        // console.log(counter / 60)
         if ((counter / 60) >= 1) setAreMinutesShown(true)
     }, [counter])
 
     useEffect(() => {
-        //console.log('region : ' + JSON.stringify(region)+'\n\n')
         CalcKm()
     }, [newRegion])
 
@@ -185,7 +145,6 @@ const Running = (props) => {
         const { coords } = await Location.getCurrentPositionAsync()
         if (coords) {
             const { latitude, longitude } = coords
-            //console.log('coords : ' + JSON.stringify(coords))
             setRegion({ latitude, longitude, latitudeDelta, longitudeDelta })
             setNewRegion({ latitude, longitude, latitudeDelta, longitudeDelta })
             setCoordinates(coordinates => [...coordinates, { latitude: latitude, longitude: longitude }])
@@ -217,10 +176,6 @@ const Running = (props) => {
 
     const GetNewLocation = (geolocation) => {
         const { latitude, longitude } = geolocation.coords
-        /*let indice = Math.floor(Math.random() * 8)
-        const latRand = tabVilles[indice].latitude
-        const longRand = tabVilles[indice].longitude
-        console.log('tabVilles : '+tabVilles.length)*/
 
         const tmpRegion = {
             latitude: latitude,
@@ -234,17 +189,10 @@ const Running = (props) => {
 
     const CalcKm = () => {
         const distance = calcDist2Points(region.latitude, region.longitude, newRegion.latitude, newRegion.longitude)
-        //console.log('region.latitude : '+region.latitude+' region.longitude : '+region.longitude+' newregion.latitude : '+newRegion.latitude+' newRegion.longitude : '+newRegion.longitude)
         if (!Number.isNaN(distance) && timerOn == true) {
-            console.log('distance : ' + parseInt(distance))
             setDistCourse(parseInt(distanceCourse) + parseInt(distance))
             setRegion(newRegion)
         }
-    }
-
-    const GetRandomInRange = (from, to, fixed) => {
-        return (Math.random() * (to - from) + from).toFixed(fixed) * 1
-        // .toFixed() returns string, so ' * 1' is a trick to convert to number
     }
 
     return (
@@ -312,14 +260,6 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: 'white',
         alignItems: 'center'
-    },
-    infoRun: {
-        flex: 1,
-        alignItems: 'center',
-        marginTop: '5%',
-        paddingTop: '5%',
-        height: '30%',
-        width: '100%'
     },
     playBtn: {
         width: 70,

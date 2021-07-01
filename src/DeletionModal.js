@@ -1,20 +1,16 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, Modal, StatusBar, TouchableWithoutFeedback } from 'react-native';
 import { API_ROOT_URL } from '../config';
 
 
-// create a component
 const DeletionModal = ({ visible, onClose, currentItem, idUser }) => {
-    //const [isFirst, setIsFirst] = useState(true)
 
     const reloadTableRunUser = async (idUser, idRun, isFirst) => {
-        console.log(isFirst)
         isFirst ? (
             await axios.put(`${API_ROOT_URL}/utilisateur/runTable/${idUser}?courses=${idRun}`)
                 .then(() => {
                     console.log('Tableau des courses à jour')
-                    //setIsFirst(false)
                 })
                 .catch(err => console.log(err))
         ) : (
@@ -29,19 +25,14 @@ const DeletionModal = ({ visible, onClose, currentItem, idUser }) => {
     const getNewTableRunUser = async (idUser) => {
         await axios.get(`${API_ROOT_URL}/course/user/${idUser}`)
             .then((res) => {
-                //console.log(res.data.length)
                 if (res.data.length === 0) {
-                    //console.log('Egal a tableau vide')
                     reloadTableRunUser(idUser, '', true)
                     onClose()
                 } else {
                     console.log(JSON.stringify(res.data))
                     res.data.map((item, index) => {
-                        console.log('index : '+index)
                         if (index === 0) reloadTableRunUser(idUser, item._id, true)
                         else reloadTableRunUser(idUser, item._id, false)
-                        //console.log(isFirst)
-                        //reloadTableRunUser(idUser, item._id)
                     })
                     onClose()
                 }
@@ -50,12 +41,10 @@ const DeletionModal = ({ visible, onClose, currentItem, idUser }) => {
 
     const deleteRun = async (id, idUser) => {
         await axios.delete(`${API_ROOT_URL}/course/${id}`)
-            .then((res) => {
-                //console.log(res)
-                //setIsFirst(true)
+            .then(() => {
                 getNewTableRunUser(idUser)
             })
-            .catch(() => console.log('Il y a un blem'))
+            .catch((err) => console.log(err))
     }
 
     return (
@@ -80,7 +69,6 @@ const DeletionModal = ({ visible, onClose, currentItem, idUser }) => {
     )
 };
 
-// define your styles
 const styles = StyleSheet.create({
     modal: {
         position: 'absolute',

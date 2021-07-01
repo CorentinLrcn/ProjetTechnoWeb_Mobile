@@ -2,7 +2,6 @@ import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import Inscription from './Inscription'
 import Accueil from './Accueil'
-import { StyleSheet } from 'react-native'
 import HeaderButton from './HeaderButton'
 import Connexion from './Connexion'
 import TabNavigation from './TabNavigation'
@@ -52,12 +51,5 @@ const Navigation = () => {
         </Stack.Navigator>
     )
 }
-
-const styles = StyleSheet.create({
-    logoName: {
-        height: 100,
-        width: 100
-    }
-})
 
 export default Navigation

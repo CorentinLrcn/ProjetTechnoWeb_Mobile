@@ -7,9 +7,6 @@ import DeletionModal from './DeletionModal'
 
 
 const RunningHistory = (props) => {
-    //const [duree, setDuree] = useState([]);
-    //const [kilometres, setKilometres] = useState([]);
-    //const [date, setDate] = useState([]);
     const [courses, setCourses] = useState([])
     const [idUser, setIdUser] = useState('')
 
@@ -19,15 +16,9 @@ const RunningHistory = (props) => {
     const isFocused = useIsFocused()
 
     const InfoCourse = async (id, key) => {
-        console.log('id: ' + id)
         await axios.get(`${API_ROOT_URL}/course/${id}`)
             .then((response) => {
-                //setDuree(duree => [...duree, response.data.duree]);
-                //setKilometres(kilometres => [...kilometres, response.data.kilometres]);
-                //setDate(date => [...date, (response.data.date).slice(0, 10)]);
-                //console.log(response.data)
                 setCourses(courses => [...courses, { id: id, key: key, duree: response.data.duree, distance: response.data.metres, date: response.data.date.slice(0, 10) }])
-                console.log('courses : ' + JSON.stringify(courses))
             })
     }
 
@@ -36,7 +27,6 @@ const RunningHistory = (props) => {
             .then((response) => {
                 setIdUser(response.data._id)
                 response.data.tableauCourse.map((prop, key) => {
-                    console.log(prop)
                     if (prop != '')
                         InfoCourse(prop, key)
 
@@ -47,10 +37,6 @@ const RunningHistory = (props) => {
 
     useEffect(() => {
         if (isFocused) {
-            //console.log('email = ' + JSON.stringify(props.route.params.email))
-            //setDuree([])
-            //setKilometres([])
-            //setDate([])
             setCourses([])
             fetchInfo(props.route.params.email)
         }
@@ -116,11 +102,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         height: '100%'
     },
-    scrollView: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     title: {
         marginTop: '20%',
         color: '#1abc9c',
@@ -140,7 +121,6 @@ const styles = StyleSheet.create({
         borderBottomColor: '#1abc9c'
     },
     container: {
-        //alignItems: 'center',
         backgroundColor: 'white',
     },
     text: {
@@ -149,10 +129,8 @@ const styles = StyleSheet.create({
         color: '#e00974',
         alignItems: 'center',
         fontWeight: 'bold',
-        //backgroundColor: '#e00974',
         minWidth: '100%',
-        textAlign: 'center',
-        //borderBottomWidth: 1
+        textAlign: 'center'
     },
     tableHeaderTime: {
         paddingVertical: '2%',
@@ -177,8 +155,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         width: '27.5%',
         fontWeight: 'bold',
-        //borderRightWidth: 1,
-        //borderLeftWidth: 1,
         backgroundColor: '#e00974'
     },
     tableTimeRows: {
@@ -193,44 +169,13 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         backgroundColor: '#e00974',
         color: 'white',
-        width: '27.5%',
-        //borderRightWidth: 1,
-        //borderLeftWidth: 1
+        width: '27.5%'
     },
     tableDateRows: {
         paddingVertical: '2%',
         fontSize: 20,
         textAlign: 'center',
         width: '35%'
-    },
-    textInput: {
-        fontSize: 20,
-        color: 'white',
-        textAlign: 'center',
-        fontWeight: 'bold',
-        textDecorationLine: 'underline'
-    },
-    block: {
-        flexDirection: 'row'
-    },
-    loginBtn: {
-        width: "80%",
-        borderRadius: 5,
-        height: 50,
-        alignSelf: "center",
-        justifyContent: "center",
-        backgroundColor: "#1abc9c",
-        paddingHorizontal: "10%",
-    },
-    loginText: {
-        fontWeight: "bold",
-        color: 'white',
-        textAlign: 'center',
-        fontSize: 20
-    },
-    picker: {
-        marginVertical: '10%',
-        borderWidth: 1
     }
 })
 

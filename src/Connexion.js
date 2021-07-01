@@ -36,7 +36,7 @@ const Connexion = (props) => {
       <View style={styles.form}>
         <View style={styles.inputView}>
           <TextInput
-            style={styles.TextInput}
+            style={styles.TtxtInput}
             placeholder="Email"
             placeholderTextColor="gray"
             onChangeText={(email) => setEmail(email)}
@@ -44,7 +44,7 @@ const Connexion = (props) => {
         </View>
         <View style={styles.inputView}>
           <TextInput
-            style={styles.TextInput}
+            style={styles.textInput}
             placeholder="Mot de passe"
             placeholderTextColor="gray"
             secureTextEntry={true}
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  TextInput: {
+  textInput: {
     textAlign: "center",
     color: 'black'
   },

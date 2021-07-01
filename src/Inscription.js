@@ -1,7 +1,6 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
-import DatePicker from "react-native-datepicker";
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { API_ROOT_URL } from "../config";
@@ -9,7 +8,6 @@ import { API_ROOT_URL } from "../config";
 const Ajout = async (prenom, nom, email, dateDeNaissance, motDePasse) => {
   try {
     const res = axios.post(`${API_ROOT_URL}/utilisateur/inscriptionMobile?nom=${nom}&prenom=${prenom}&email=${email}&dateDeNaissance=${dateDeNaissance}&motDePasse=${motDePasse}`)
-    //console.log('data : '+res.data)
     return (await res.catch()).data;
   } catch (err) {
     console.log(err);
@@ -27,7 +25,6 @@ const Inscription = (props) => {
   const [jourNaissance, setJourN] = useState("");
   const [moisNaissance, setMoisN] = useState("");
   const [anneeNaissance, setAnneeN] = useState("");
-  //const [dateDeNaissance, setDate] = useState('');
 
   const { navigation } = props;
 
@@ -42,10 +39,8 @@ const Inscription = (props) => {
   }
 
   const VerifIfEmailTaken = async () => {
-    console.log('bonjour')
     await axios.get(`${API_ROOT_URL}/utilisateur/${email}`)
       .then((response) => {
-        console.log('response : ' + JSON.stringify(response))
         if (response.data !== '') {
           showMessage({
             message: `Un compte existe déjà pour ${email}`,
@@ -57,7 +52,7 @@ const Inscription = (props) => {
         }
       })
       .catch((err) => {
-        console.log(`Erreur : ${err}`)
+        console.log(err)
       })
   }
 
@@ -71,7 +66,7 @@ const Inscription = (props) => {
       <View style={styles.form}>
         <View style={styles.inputView}>
           <TextInput
-            style={styles.TextInput}
+            style={styles.textInput}
             placeholder="Nom"
             placeholderTextColor="gray"
             onChangeText={(nom) => setNom(nom)}
@@ -79,7 +74,7 @@ const Inscription = (props) => {
         </View>
         <View style={styles.inputView}>
           <TextInput
-            style={styles.TextInput}
+            style={styles.textInput}
             placeholder="Prenom"
             placeholderTextColor="gray"
             onChangeText={(prenom) => setPrenom(prenom)}
@@ -88,7 +83,7 @@ const Inscription = (props) => {
         <View style={styles.inputView2}>
           <View style={styles.inputViewJM}>
             <TextInput
-              style={styles.TextInput}
+              style={styles.textInput}
               placeholder="Jour"
               placeholderTextColor="gray"
               onChangeText={(jourNaissance) => setJourN(jourNaissance)}
@@ -99,7 +94,7 @@ const Inscription = (props) => {
 
           <View style={styles.inputViewJM}>
             <TextInput
-              style={styles.TextInput}
+              style={styles.textInput}
               placeholder="Mois"
               placeholderTextColor="gray"
               onChangeText={(moisNaissance) => setMoisN(moisNaissance)}
@@ -110,7 +105,7 @@ const Inscription = (props) => {
 
           <View style={styles.inputViewAnnee}>
             <TextInput
-              style={styles.TextInput}
+              style={styles.textInput}
               placeholder="Annee"
               placeholderTextColor="gray"
               onChangeText={(anneeNaissance) => setAnneeN(anneeNaissance)}
@@ -118,33 +113,10 @@ const Inscription = (props) => {
               maxLength={4}
             />
           </View>
-          {/*<DatePicker
-            date={dateDeNaissance}
-            mode="date"
-            placeholder="Date de Naissance"
-            style={styles.calendar}
-            format="DD-MM-YYYY"
-            minDate="01-01-1900"
-            maxDate="31-12-2050"
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-            customStyles={{
-              dateIcon: {
-                display: 'none'
-              },
-              dateInput: {
-                borderWidth: 0,
-                placeholderTextColor: 'red'
-              },
-            }}
-            onDateChange={(date) => {
-              setDate(date);
-            }}
-          />*/}
         </View>
         <View style={styles.inputView}>
           <TextInput
-            style={styles.TextInput}
+            style={styles.textInput}
             placeholder="Email"
             placeholderTextColor="gray"
             onChangeText={(email) => setEmail(email)}
@@ -152,7 +124,7 @@ const Inscription = (props) => {
         </View>
         <View style={styles.inputView}>
           <TextInput
-            style={styles.TextInput}
+            style={styles.textInput}
             placeholder="Mot de passe"
             placeholderTextColor="gray"
             secureTextEntry={true}
@@ -163,8 +135,6 @@ const Inscription = (props) => {
         <TouchableOpacity
           style={styles.signinBtn}
           onPress={() => {
-            console.log(anneeNaissance + '-' + moisNaissance + '-' + jourNaissance)
-            //setDate(new Date(anneeNaissance + '-' + moisNaissance + '-' + jourNaissance))
             VerifNotEmpty()
           }}
         >
@@ -202,10 +172,6 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
 
-  image: {
-    marginBottom: 40,
-  },
-
   inputView: {
     backgroundColor: "#e0e0e0",
     borderRadius: 10,
@@ -241,13 +207,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
 
-  calendar: {
-    width: '100%',
-    backgroundColor: "white",
-    borderRadius: 10
-  },
-
-  TextInput: {
+  textInput: {
     textAlign: "center",
     color: 'black'
   },
