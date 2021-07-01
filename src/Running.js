@@ -118,12 +118,11 @@ const Running = (props) => {
         const date = `${annee}-${mois}-${jour}`
         const vitesseMoyenne = (distance / 1000) / (duree / 3600)
         const body = {
-            kilometres: distance / 1000,
+            metres: distance / 1000,
             duree: duree,
             date: date,
-            vitesseMoyenne: vitesseMoyenne
         }
-        await axios.post(`${API_ROOT_URL}/course?kilometres=${distance}&duree=${duree}&date=${date}&vitesseMoyenne=${vitesseMoyenne}&idRunner=${id}`, body)
+        await axios.post(`${API_ROOT_URL}/course?metres=${distance}&duree=${duree}&date=${date}&idRunner=${id}`, body)
             .then((res) => {
                 console.log(res.data);
                 addRun(res.data.idRunner, res.data._id)

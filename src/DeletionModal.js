@@ -6,21 +6,23 @@ import { API_ROOT_URL } from '../config';
 
 // create a component
 const DeletionModal = ({ visible, onClose, currentItem, idUser }) => {
-    const [isFirst, setIsFirst] = useState(true)
+    //const [isFirst, setIsFirst] = useState(true)
 
-    const reloadTableRunUser = async (idUser, idRun) => {
+    const reloadTableRunUser = async (idUser, idRun, isFirst) => {
         console.log(isFirst)
         isFirst ? (
             await axios.put(`${API_ROOT_URL}/utilisateur/runTable/${idUser}?courses=${idRun}`)
                 .then(() => {
                     console.log('Tableau des courses à jour')
-                    setIsFirst(false)
+                    //setIsFirst(false)
                 })
+                .catch(err => console.log(err))
         ) : (
             await axios.post(`${API_ROOT_URL}/utilisateur/${idUser}?course=${idRun}`)
                 .then(() => {
                     console.log('Tableau des courses à jour')
                 })
+                .catch(err => console.log(err))
         )
     }
 
@@ -30,11 +32,18 @@ const DeletionModal = ({ visible, onClose, currentItem, idUser }) => {
                 //console.log(res.data.length)
                 if (res.data.length === 0) {
                     //console.log('Egal a tableau vide')
-                    reloadTableRunUser(idUser, '')
+                    reloadTableRunUser(idUser, '', true)
+                    onClose()
                 } else {
-                    res.data.map((item) => {
-                        reloadTableRunUser(idUser, item._id)
+                    console.log(JSON.stringify(res.data))
+                    res.data.map((item, index) => {
+                        console.log('index : '+index)
+                        if (index === 0) reloadTableRunUser(idUser, item._id, true)
+                        else reloadTableRunUser(idUser, item._id, false)
+                        //console.log(isFirst)
+                        //reloadTableRunUser(idUser, item._id)
                     })
+                    onClose()
                 }
             })
     }
@@ -43,7 +52,7 @@ const DeletionModal = ({ visible, onClose, currentItem, idUser }) => {
         await axios.delete(`${API_ROOT_URL}/course/${id}`)
             .then((res) => {
                 //console.log(res)
-                setIsFirst(true)
+                //setIsFirst(true)
                 getNewTableRunUser(idUser)
             })
             .catch(() => console.log('Il y a un blem'))
@@ -58,7 +67,6 @@ const DeletionModal = ({ visible, onClose, currentItem, idUser }) => {
                     <View style={styles.optionContainer}>
                         <TouchableWithoutFeedback onPress={() => {
                             deleteRun(currentItem, idUser)
-                            onClose()
                         }}>
                             <Text style={styles.option}>Supprimer</Text>
                         </TouchableWithoutFeedback>

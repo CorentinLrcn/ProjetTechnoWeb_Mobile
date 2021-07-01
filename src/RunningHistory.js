@@ -26,7 +26,7 @@ const RunningHistory = (props) => {
                 //setKilometres(kilometres => [...kilometres, response.data.kilometres]);
                 //setDate(date => [...date, (response.data.date).slice(0, 10)]);
                 //console.log(response.data)
-                setCourses(courses => [...courses, { id: id, key: key, duree: response.data.duree, distance: response.data.kilometres, date: response.data.date.slice(0,10) }])
+                setCourses(courses => [...courses, { id: id, key: key, duree: response.data.duree, distance: response.data.metres, date: response.data.date.slice(0, 10) }])
                 console.log('courses : ' + JSON.stringify(courses))
             })
     }
@@ -55,6 +55,15 @@ const RunningHistory = (props) => {
             fetchInfo(props.route.params.email)
         }
     }, [isFocused])
+
+    useEffect(() => {
+        if (!isVisible) {
+            setTimeout(() => {
+                setCourses([])
+                fetchInfo(props.route.params.email)
+            }, 5000);
+        }
+    }, [isVisible])
 
     return (
         <ScrollView style={styles.background}>
